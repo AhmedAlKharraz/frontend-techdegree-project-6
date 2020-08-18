@@ -1,5 +1,6 @@
 const qwerty = document.getElementById('qwerty');
 const phrase = document.getElementById('phrase');
+const ul = phrase.querySelector('ul');
 
 const overlay = document.getElementById('overlay');
 const startBtn = document.querySelector('.btn__reset'); //note: It written I have to attach a event listener to the “Start Game”
@@ -40,19 +41,79 @@ function getRandomPhraseAsArray(arr) {
 function addPhraseToDisplay(arr) {
     // do stuff any arr that is passed in, and add to `#phrase ul`
 
-    const ul = phrase.querySelector('ul');
+    /* 
+        for (var i = 0; i < arr.length; i++) {
 
-    for (var i = 0; i < arr.length; i++) {
+            //console.log(arr[i]);
+            
+                    if (typeof arr[i] === 'string' || arr[i] instanceof String) {
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(arr[i]));
+                        li.className += 'letter';
+                        ul.appendChild(li);
+                    } else {
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(arr[i]));
+                        li.className += 'space';
+                        ul.appendChild(li);
+                    }
+                }
+                */
 
-        // Set its contents:
-        ul.appendChild(document.createTextNode(arr[i]));
+    arr.forEach(function (i) {
+        if (i !== " ") {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(i));
+            li.className += 'letter';
+            ul.appendChild(li);
+        } else {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(i));
+            li.className += 'space';
+            ul.appendChild(li);
+        }
+    });
 
-        // Add it to the list:
-        phrase.appendChild(ul);
-    }
 
-    return ul;
+    return phrase;
 }
 
+
 const phraseArray = getRandomPhraseAsArray(phrases);
-addPhrasetoDisplay(phraseArray);
+addPhraseToDisplay(phraseArray);
+
+console.log(phrase);
+
+function checkLetter(btn) {
+
+    //loop through the child of ul and check the letter with btn, if match add "show" class
+    var lis = document.querySelectorAll(".letter");
+    var n = 'null';
+
+    for (var i = 0, len = lis.length; i < len; i++) {
+        if (btn === lis[i].textContent) {
+            lis[i].className += ' show';
+            console.log("enter if inside loop");
+        } else {
+            console.log(lis[i]);
+        }
+    }
+
+
+}
+
+qwerty.addEventListener('click', (e) => {
+    if (e.target.nodeName === 'BUTTON') {
+        e.target.setAttribute("class", "chosen");
+        if (e.target.hasAttribute("class", "chosen")) {
+            const btn = e.target.hasAttribute("class", "chosen");
+
+            checkLetter(e.target.textContent);
+
+            //loop through the child of ul and check the letter with btn, if match then add "show" class
+
+            e.target.disabled = true
+        }
+
+    }
+});
