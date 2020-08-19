@@ -3,7 +3,13 @@ const phrase = document.getElementById('phrase');
 const ul = phrase.querySelector('ul');
 
 const overlay = document.getElementById('overlay');
+const overlayH2 = document.querySelector('h2');
 const startBtn = document.querySelector('.btn__reset'); //note: It written I have to attach a event listener to the “Start Game”
+
+var lis = document.querySelectorAll(".letter");
+
+const ol = document.getElementsByTagName('ol')[0];
+const hearts = ol.getElementsByTagName('li');
 
 const phrases = [
     'Boldness be my friend',
@@ -30,7 +36,7 @@ function getRandomPhraseAsArray(arr) {
     console.log(randomSelect);
     let char = [];
     for (var i = 0; i < randomSelect.length; i++) {
-        char.push(randomSelect.charAt(i));
+        char.push(randomSelect.charAt(i).toLowerCase());
     }
 
     console.log(char);
@@ -82,37 +88,79 @@ function addPhraseToDisplay(arr) {
 const phraseArray = getRandomPhraseAsArray(phrases);
 addPhraseToDisplay(phraseArray);
 
-console.log(phrase);
+console.log(phraseArray.length);
 
 function checkLetter(btn) {
 
     //loop through the child of ul and check the letter with btn, if match add "show" class
     var lis = document.querySelectorAll(".letter");
-    var n = 'null';
+    var n = null;
+
+    //lastLi = lis[lis.length - 1].textContent;
 
     for (var i = 0, len = lis.length; i < len; i++) {
+
+        console.log(lis[i].textContent, btn)
+
         if (btn === lis[i].textContent) {
             lis[i].className += ' show';
             console.log("enter if inside loop");
-        } else {
-            console.log(lis[i]);
+            n = lis[i].textContent;
         }
+
+        /*
+        if (lastLi == lis[i].textContent) {
+            console.log('nooooo');
+        }
+        */
     }
 
+    return n;
 
+
+}
+
+function tryAgain(endScreen) {
+
+    console.log('game over');
+
+    overlay.style.removeProperty('display');
+    overlay.className = endScreen;
+
+    if (endScreen == 'lose') {
+        overlayH2.innerHTML = 'Ooops, You Lose >.<';
+    } else {
+        overlayH2.innerHTML = 'Woohoo, YOU WIN';
+    }
 }
 
 qwerty.addEventListener('click', (e) => {
     if (e.target.nodeName === 'BUTTON') {
         e.target.setAttribute("class", "chosen");
         if (e.target.hasAttribute("class", "chosen")) {
+
             const btn = e.target.hasAttribute("class", "chosen");
+            e.target.disabled = true;
 
-            checkLetter(e.target.textContent);
+            // assign the returned value of the checkLetter function to a variable
+            let letterFound = checkLetter(e.target.textContent);
 
-            //loop through the child of ul and check the letter with btn, if match then add "show" class
+            let allLetterClasses = ul.querySelectorAll(" .show").length + ul.querySelectorAll(".space").length;
+            console.log(allLetterClasses);
 
-            e.target.disabled = true
+            if (allLetterClasses === phraseArray.length) {
+                console.log('Wooohoooooooo I wiiiiiinnnnnnn');
+                tryAgain('win');
+            }
+
+            if (letterFound === null && missed != 5) {
+                missed += 1;
+                ol.removeChild(hearts[0]);
+            }
+
+            if (missed == 5) {
+                tryAgain('lose');
+            }
         }
 
     }
